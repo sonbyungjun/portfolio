@@ -1,0 +1,7 @@
+<script>
+  $('.del').on('click', function(){
+    if (confirm('정말로 삭제하겠습니까?')) {
+      location.href = `/delete?no=${this.value}`;
+    }
+  })
+</script>

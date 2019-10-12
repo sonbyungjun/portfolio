@@ -12,5 +12,6 @@ db.Sequelize = Sequelize;
 
 db.User = require('./user')(sequelize, Sequelize);
 db.Portfolio = require('./portfolio')(sequelize, Sequelize);
+db.Counter = require('./counter')(sequelize, Sequelize);
 
 module.exports = db;

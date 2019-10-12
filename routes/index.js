@@ -58,6 +58,15 @@ router.get('/form', isLoggedIn, async (req, res, next) => {
   res.render('form');
 });
 
+router.get('/delete', isLoggedIn, async (req, res, next) => {
+  try {
+    await Portfolio.destroy({ where: { id: req.query.no } });
+    res.redirect('/');
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.post('/portfolio', upload.single('img'), isLoggedIn, async (req, res, next) => {
   const { title, link, content } = req.body;
   try {

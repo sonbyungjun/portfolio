@@ -33,6 +33,7 @@ app.use(session({
     secure: false,
   },
 }));
+// app.use(countVisitors);
 
 app.use(flash());
 app.use(passport.initialize());
@@ -64,3 +65,35 @@ app.use((err, req, res, next) => {
 app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기중');
 });
+
+async function countVisitors(req, res, next) {
+  if (!req.cookies.count && !req.cookies['connect.sid']) {
+  // if (true) {
+    res.cookie('count', "", { maxAge: 3600000, httpOnly: true });
+    const now = new Date();
+    const date = now.getFullYear() + "/" + now.getMonth() + "/" + now.getDate();
+    if (date != req.cookies.countDate) {
+      console.log("???");
+      res.cookie('countDate', date, { maxAge: 3600000, httpOnly: true });
+      const { Counter } = require('./models');
+      try {
+        const counter = await Counter.findOne({ where: { name: 'vistors' }});
+        if (counter) {
+          counter.totalCount++;
+          if (counter.date == date) {
+            counter.todayCount++;
+          } else {
+            counter.todayCount = 1;
+            counter.date = date;
+          }
+          counter.save();
+        } else {
+          await Counter.create({ name: 'vistors', totalCount: 1, todayCount: 1 });
+        }
+      } catch (e) {
+        next();
+      }
+    }
+  }
+  return next();
+}
